@@ -35,19 +35,11 @@ func NewGServ(params Params) *GServ {
 	}
 }
 
-func (g *GServ) Init(ctx context.Context, registerServices func(*grpc.Server), beforeListener, afterListener func() error) error {
+func (g *GServ) Init(ctx context.Context, registerServices func(*grpc.Server)) error {
 	const op = "gserv.Init"
 	ctx = g.logger.NewOpCtx(ctx, op)
 
 	var err error
-
-	if beforeListener != nil {
-		if err = beforeListener(); err != nil {
-			err = fmt.Errorf("ошибка при выполнении beforeListener для сервиса %s:%d", g.host, g.port)
-
-			return err
-		}
-	}
 
 	g.listener, err = net.Listen("tcp", iport.FormatLocal(g.port))
 	if err != nil {
@@ -60,14 +52,6 @@ func (g *GServ) Init(ctx context.Context, registerServices func(*grpc.Server), b
 	}
 
 	g.logger.Info(ctx, fmt.Sprintf("сервис %s запущен по адресу %d", g.host, g.port))
-
-	if afterListener != nil {
-		if err = afterListener(); err != nil {
-			err = fmt.Errorf("ошибка при выполнении afterListener: %v", err)
-			g.logger.Error(ctx, err)
-			return err
-		}
-	}
 
 	go func() {
 		if err := s.Serve(g.listener); err != nil {
