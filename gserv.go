@@ -25,7 +25,7 @@ type GServ struct {
 	logger   logit.Logger
 }
 
-func NewGServ(params Params) *GServ {
+func NewGServ(params *Params) *GServ {
 	return &GServ{
 		listener: nil,
 		host:     params.Host,
