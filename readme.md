@@ -1,5 +1,5 @@
 ```go
-go get github.com/budka-tech/gserv@latest
+go get -u github.com/budka-tech/gserv
 ```
 
 # GServ
